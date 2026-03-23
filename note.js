@@ -1,16 +1,17 @@
 let notes=JSON.parse(localStorage.getItem("notes"))||[]
-let deleted= document.querySelector("#delted")
+let deleted= document.querySelector("#deleted")
 let saved = document.querySelector("#saved")
 let notesGrid=document.querySelector("#notesGrid")
 let search=document.querySelector("#search")
 let i=1;
+let date="";
 console.dir(title);
 console.dir(content);
 let added = document.querySelector("#added")
 let n={
-    title:"",
-    content:"",
-    date:""
+        title:"",
+        content:"",
+        date:""
     }
 added.addEventListener("click",()=>{
     title.value=""
@@ -19,17 +20,12 @@ added.addEventListener("click",()=>{
 search.addEventListener("input",(data)=>{
     let cards = document.querySelectorAll(".card")
     notesGrid.innerHTML="";
-    let i=0
-    console.log(data.target.value);
-    console.log(notes);
-    
-    cards.forEach((card)=>{
+    let i=0;
+    notes.forEach((card)=>{
         if (notes[i].title.startsWith(data.target.value))
             notesMaking(notes[i])
         i++
-    })
-    console.log(notesGrid.innerHTML);
-    
+    }) 
 })
 notes.forEach(note => {
     notesMaking(note)
@@ -62,28 +58,58 @@ function notesMaking(note){
     div.append(span)
     notesGrid.append(div)
     div.addEventListener("click",(data)=>{
-        console.log(data);
         title.value=note.title
         content.value=note.content
+        date=data.srcElement.parentElement.textContent.slice(-24)
+        console.log(date);
+        
     })
 };
-saved.addEventListener("click",()=>{
-    console.log(title.value);
+deleted.addEventListener("click",(data)=>{
+    let cards = document.querySelectorAll(".card")
+    console.log(cards);
+        cards.forEach((card)=>{
+        if(card.children[2].textContent===date){
+            card.remove()
+            title.value=""
+            content.value=""
+            notes=notes.filter(note=>note.date!==date)
+            console.log(notes);
+            localStorage.setItem("notes",JSON.stringify(notes))
+    }
+    })
+})
+saved.addEventListener("click",(data)=>{
+    let i=0;
+    let final=0
     n.title=title.value;
     n.content=content.value;
-    n.date=new Date();
-    notes=[...notes,n]
-    notesMaking(n)
-    title.value=""
-    content.value=""
-    console.log(notes);
-    console.log("Is it added");
-    console.log(n);
-    console.log(notes);
-    
+    let cards = document.querySelectorAll(".card")
+    notes.forEach((note)=>{
+        if(note.date===date)
+        {
+            notes[i].title=title.value;
+            notes[i].content=content.value;
+            final=1;
+            cards.forEach((card)=>{
+                console.dir(card.children[2].textContent);
+                console.log(final);
+                
+                if(card.children[2].textContent===date){
+                    card.children[0].textContent=title.value;
+                    card.children[1].textContent=content.value;
+                    }
+            })
+        }
+        i++
+    })
+    if(final===0){
+        n.date=new Date().toISOString();
+        let newN = JSON.parse(JSON.stringify(n))
+        notes=[...notes,newN]
+        notesMaking(n)
+        title.value=""
+        content.value=""
+    }
     localStorage.setItem("notes",JSON.stringify(notes))
-    n.title="";
-    n.content="";
-    n.date="";
-    console.log(notes);
 })
