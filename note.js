@@ -18,13 +18,10 @@ added.addEventListener("click",()=>{
     content.value=""
 })
 search.addEventListener("input",(data)=>{
-    let cards = document.querySelectorAll(".card")
     notesGrid.innerHTML="";
-    let i=0;
-    notes.forEach((card)=>{
-        if (notes[i].title.startsWith(data.target.value))
-            notesMaking(notes[i])
-        i++
+    notes.forEach((note)=>{
+        if (note.title.startsWith(data.target.value))
+            notesMaking(note)
     }) 
 })
 notes.forEach(note => {
@@ -65,41 +62,28 @@ function notesMaking(note){
         
     })
 };
+function rerender(){
+    notesGrid.innerHTML="";
+    notes.forEach(note=>notesMaking(note))
+}
 deleted.addEventListener("click",(data)=>{
-    let cards = document.querySelectorAll(".card")
-    console.log(cards);
-        cards.forEach((card)=>{
-        if(card.children[2].textContent===date){
-            card.remove()
-            title.value=""
-            content.value=""
-            notes=notes.filter(note=>note.date!==date)
-            console.log(notes);
-            localStorage.setItem("notes",JSON.stringify(notes))
-    }
-    })
+    notes=notes.filter(note=>note.date!==date)
+    title.value="";
+    content.value="";
+    rerender();
+    localStorage.setItem("notes",JSON.stringify(notes))
 })
 saved.addEventListener("click",(data)=>{
     let i=0;
     let final=0
     n.title=title.value;
     n.content=content.value;
-    let cards = document.querySelectorAll(".card")
     notes.forEach((note)=>{
         if(note.date===date)
         {
-            notes[i].title=title.value;
-            notes[i].content=content.value;
+            note.title=title.value;
+            note.content=content.value;
             final=1;
-            cards.forEach((card)=>{
-                console.dir(card.children[2].textContent);
-                console.log(final);
-                
-                if(card.children[2].textContent===date){
-                    card.children[0].textContent=title.value;
-                    card.children[1].textContent=content.value;
-                    }
-            })
         }
         i++
     })
@@ -107,9 +91,9 @@ saved.addEventListener("click",(data)=>{
         n.date=new Date().toISOString();
         let newN = JSON.parse(JSON.stringify(n))
         notes=[...notes,newN]
-        notesMaking(n)
-        title.value=""
-        content.value=""
     }
+    rerender();
+    title.value=""
+    content.value=""
     localStorage.setItem("notes",JSON.stringify(notes))
 })
