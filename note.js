@@ -4,14 +4,16 @@ let saved = document.querySelector("#saved")
 let notesGrid=document.querySelector("#notesGrid")
 let search=document.querySelector("#search")
 let i=1;
-let date="";
+let timestamp="";
 console.dir(title);
 console.dir(content);
 let added = document.querySelector("#added")
+let addNote=document.querySelector("#addNote")
 let n={
         title:"",
         content:"",
-        date:""
+        date:"",
+        timestamp:""
     }
 added.addEventListener("click",()=>{
     title.value=""
@@ -20,7 +22,7 @@ added.addEventListener("click",()=>{
 search.addEventListener("input",(data)=>{
     notesGrid.innerHTML="";
     notes.forEach((note)=>{
-        if (note.title.startsWith(data.target.value))
+        if (note.title.toLowerCase().startsWith(data.target.value.toLowerCase()))
             notesMaking(note)
     }) 
 })
@@ -57,17 +59,18 @@ function notesMaking(note){
     div.addEventListener("click",(data)=>{
         title.value=note.title
         content.value=note.content
-        date=data.srcElement.parentElement.textContent.slice(-24)
-        console.log(date);
+        timestamp=note.timestamp
+        console.log(data);
         
     })
 };
 function rerender(){
+    i=1
     notesGrid.innerHTML="";
     notes.forEach(note=>notesMaking(note))
 }
 deleted.addEventListener("click",(data)=>{
-    notes=notes.filter(note=>note.date!==date)
+    notes=notes.filter(note=>note.timestamp!==timestamp)
     title.value="";
     content.value="";
     rerender();
@@ -79,7 +82,7 @@ saved.addEventListener("click",(data)=>{
     n.title=title.value;
     n.content=content.value;
     notes.forEach((note)=>{
-        if(note.date===date)
+        if(note.timestamp===timestamp)
         {
             note.title=title.value;
             note.content=content.value;
@@ -88,7 +91,8 @@ saved.addEventListener("click",(data)=>{
         i++
     })
     if(final===0){
-        n.date=new Date().toISOString();
+        n.timestamp=new Date().toISOString()
+        n.date=new Date().toLocaleDateString();
         let newN = JSON.parse(JSON.stringify(n))
         notes=[...notes,newN]
     }
@@ -96,4 +100,8 @@ saved.addEventListener("click",(data)=>{
     title.value=""
     content.value=""
     localStorage.setItem("notes",JSON.stringify(notes))
+})
+addNote.addEventListener("click",()=>{
+    title.value=""
+    content.value=""
 })
