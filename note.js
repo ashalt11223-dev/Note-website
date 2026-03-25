@@ -1,25 +1,12 @@
 let notes=JSON.parse(localStorage.getItem("notes"))||[]
-let deleted= document.querySelector("#deleted")
-let saved = document.querySelector("#saved")
 let notesGrid=document.querySelector("#notesGrid")
-let search=document.querySelector("#search")
 let i=1;
 let timestamp="";
-console.dir(title);
-console.dir(content);
-let added = document.querySelector("#added")
-let addNote=document.querySelector("#addNote")
-let n={
-        title:"",
-        content:"",
-        date:"",
-        timestamp:""
-    }
-added.addEventListener("click",()=>{
+document.querySelector("#added").addEventListener("click",()=>{
     title.value=""
     content.value=""
 })
-search.addEventListener("input",(data)=>{
+document.querySelector("#search").addEventListener("input",(data)=>{
     notesGrid.innerHTML="";
     notes.forEach((note)=>{
         if (note.title.toLowerCase().startsWith(data.target.value.toLowerCase()))
@@ -69,18 +56,22 @@ function rerender(){
     notesGrid.innerHTML="";
     notes.forEach(note=>notesMaking(note))
 }
-deleted.addEventListener("click",(data)=>{
+document.querySelector("#deleted").addEventListener("click",(data)=>{
     notes=notes.filter(note=>note.timestamp!==timestamp)
     title.value="";
     content.value="";
     rerender();
     localStorage.setItem("notes",JSON.stringify(notes))
 })
-saved.addEventListener("click",(data)=>{
+document.querySelector("#saved").addEventListener("click",(data)=>{
     let i=0;
     let final=0
-    n.title=title.value;
-    n.content=content.value;
+    let n={
+        title:title.value,
+        content:content.value,
+        date:"",
+        timestamp:""
+    }
     notes.forEach((note)=>{
         if(note.timestamp===timestamp)
         {
@@ -101,7 +92,7 @@ saved.addEventListener("click",(data)=>{
     content.value=""
     localStorage.setItem("notes",JSON.stringify(notes))
 })
-addNote.addEventListener("click",()=>{
+document.querySelector("#addNote").addEventListener("click",()=>{
     title.value=""
     content.value=""
 })
